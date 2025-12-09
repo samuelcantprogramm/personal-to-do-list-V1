@@ -1,71 +1,106 @@
+/* ---------- TaskTrack — Reusable task item + app logic ---------- */
+
+// DOM refs
 const taskInput = document.getElementById('taskInput');
 const addTaskButton = document.getElementById('addTaskButton');
 const taskList = document.getElementById('TaskList');
+const searchInput = document.getElementById('search') || null; // optional if you have a search
 
-let tasks = []
-addTaskButton.addEventListener('click', () => {
+// data
+let tasks = [];
 
+/**
+ * createTaskItem(value)
+ * - builds the <li> structure with .task-text then delete button
+ * - wires delete handler (updates tasks + localStorage)
+ * - returns the <li>
+ */
+function createTaskItem(value) {
   const li = document.createElement('li');
-  const value = taskInput.value.trim();
 
-  if (value === "") {
-    alert("Empty Field, Try again");
-    return;
-  }
+  const textDiv = document.createElement('div');
+  textDiv.className = 'task-text';
+  textDiv.textContent = value;
 
-  let exists = false;
-  for (let item of taskList.children){
-    if (item.textContent.trim().toLowerCase() === value.toLowerCase()){
-        exists = true;
-        break;
-    }
-  }
+  const deleteBtn = document.createElement('button');
+  deleteBtn.className = 'deleteBtn';
+  deleteBtn.innerHTML = `<img src="icons/trashcan.png" alt="delete">`;
 
-  if (exists === true){
-    alert("Task Already Exists")
-    return;
-  }
-  li.textContent = value;
-  taskList.appendChild(li);
-  tasks.push(value)
-  localStorage.setItem("tasks", JSON.stringify(tasks));
-  taskInput.value = "";
-  
-  const deleteBtn =  document.createElement('button');
-  deleteBtn.innerHTML = `<img src="icons/trashcan.png" alt="delete" />`;
-  li.appendChild(deleteBtn)
-  deleteBtn.addEventListener("click", () => {
-    const valueToDelete = li.firstChild.textContent.trim();
-    tasks = tasks.filter(task => task !== valueToDelete)
+  li.appendChild(textDiv);
+  li.appendChild(deleteBtn);
+
+  // delete handler
+  deleteBtn.addEventListener('click', () => {
+    // remove from array (removes all duplicates with same text)
+    tasks = tasks.filter(task => task !== value);
+    // remove from DOM
     li.remove();
-    localStorage.setItem("tasks", JSON.stringify(tasks));
+    // persist
+    localStorage.setItem('tasks', JSON.stringify(tasks));
   });
 
-});
-
-function loadTasks(){
-    const saved = localStorage.getItem("tasks")
-    if (!saved) {
-        return
-    }
-    
-    tasks = JSON.parse(saved)
-
-    for (let value of tasks){
-        const li = document.createElement("li")
-        li.textContent =  value;
-        taskList.appendChild(li);
-        const deleteBtn =  document.createElement('button');
-        deleteBtn.innerHTML = `<img src="icons/trashcan.png" alt="delete" />`;
-        li.appendChild(deleteBtn)
-        deleteBtn.addEventListener("click", () => {
-            const valueToDelete = li.firstChild.textContent.trim();
-            tasks = tasks.filter(task => task !== valueToDelete)
-            li.remove();
-            localStorage.setItem("tasks", JSON.stringify(tasks))
-        });
-
-    }
+  return li;
 }
 
+/* ---------- Add task logic ---------- */
+function addTask() {
+  const value = taskInput.value.trim();
+  if (!value) {
+    alert('Empty Field, Try again');
+    return;
+  }
+
+  // duplicate check (case-insensitive) using tasks array
+  if (tasks.some(t => t.trim().toLowerCase() === value.toLowerCase())) {
+    alert('Task Already Exists');
+    return;
+  }
+
+  // create element + append
+  const li = createTaskItem(value);
+  taskList.appendChild(li);
+
+  // save
+  tasks.push(value);
+  localStorage.setItem('tasks', JSON.stringify(tasks));
+
+  // clear input
+  taskInput.value = '';
+  taskInput.focus();
+}
+
+/* allow Enter key to add */
+taskInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') addTask();
+});
+addTaskButton.addEventListener('click', addTask);
+
+/* ---------- Load tasks from storage ---------- */
+function loadTasks() {
+  const saved = localStorage.getItem('tasks');
+  if (!saved) return;
+  try {
+    tasks = JSON.parse(saved) || [];
+  } catch (err) {
+    tasks = [];
+  }
+
+  for (const value of tasks) {
+    const li = createTaskItem(value);
+    taskList.appendChild(li);
+  }
+}
+
+/* ---------- Optional: simple live-search (if you have an input#search) ---------- */
+if (searchInput) {
+  searchInput.addEventListener('input', () => {
+    const q = searchInput.value.trim().toLowerCase();
+    for (const li of taskList.children) {
+      const text = li.querySelector('.task-text')?.textContent.trim().toLowerCase() || '';
+      li.style.display = text.includes(q) ? '' : 'none';
+    }
+  });
+}
+
+/* ---------- Init ---------- */
 loadTasks();

@@ -1,7 +1,11 @@
+/* ---------- Base ---------- */
 body {
   font-family: 'Inter', sans-serif;
   background: #f4f0ff;
-  padding: 20px;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  box-sizing: border-box;
 }
 
 /* Headings */
@@ -10,106 +14,174 @@ body {
   font-family: 'Poppins', sans-serif;
   font-weight: 600;
   text-align: center;
-  color: #5a2ea6; /* deep purple */
+  color: #5a2ea6;
   margin-bottom: 20px;
 }
 
-/* Input row */
-.add-task-container {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
-  gap: 20px;
-}
-.add-task-container input {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  width: 250px;
-  font-size: 16px;
-}
-
-.add-task-container input:focus {
-  outline: none;
-  border-color: #5a2ea6; /* deep purple */
-  box-shadow: 0 0 5px rgba(90, 46, 166, 0.3);
-}
-
-.add-task-container input:hover {
-  border-color: #7b3ff2; /* lighter purple */
-  transition: 0.5s;
-}
-
-#addTaskButton {
-  background: #5a2ea6; /* deep purple */
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  padding: 10px 16px;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-#addTaskButton:hover {
-  background: #7b3ff2; /* lighter purple */
-  transform: scale(1.05);
-}
-/* Main task container */
-.task-container {
+/* Container that centers the whole app */
+.app-wrap {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  padding: 24px 12px;
+}
+
+/* Input row (add task) — responsive */
+.add-task-container {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  max-width: 500px;
+  margin-bottom: 20px;
+  align-items: center;
+}
+.add-task-container input {
+  flex: 1;
+  min-width: 0;               /* IMPORTANT for truncation in flex */
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+#addTaskButton {
+  background: #5a2ea6;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 14px;
+  cursor: pointer;
+  transition: transform .12s ease, background .12s;
+  flex-shrink: 0;
+}
+
+/* Main task container */
+.task-container {
+  width: 100%;
+  max-width: 500px;
   background: #fff;
   border-radius: 10px;
   padding: 20px;
-  box-shadow: 0 4px 8px rgba(90, 46, 166, 0.1);
-  max-width: 500px;
-  margin: 0 auto;
-  border: 1px solid rgba(90, 46, 166, 0.2);
+  box-shadow: 0 4px 8px rgba(90, 46, 166, 0.08);
+  border: 1px solid rgba(90, 46, 166, 0.12);
+  box-sizing: border-box;
+  margin: 0 auto 32px;
 }
 
-/* Reset list style */
-li {
-  list-style-type: none;
-}
-
-/* Task items */
-#TaskList li {
+/* Search row */
+.search-bar-container {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 20px;
-  width: 320px;
-  padding: 12px 16px;
-  background-color: #ebe4ff; /* light purple */
-  border-radius: 8px;
-  margin-bottom: 10px;
-  color: #3c1c75;
-  font-weight: 500;
-}
-
-/* Delete button (with icon) */
-#TaskList button {
-  background: #9d4edd; /* purple button */
-  border: none;
-  border-radius: 6px;
-  padding: 4px 6px;
-  display: flex;
+  gap: 10px;
   align-items: center;
   justify-content: center;
-  transition: 0.2s;
+  margin-bottom: 20px;
+}
+.search-bar-container input {
+  flex: 1;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+#Search-btn {
+  background: #5a2ea6;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 12px;
+  cursor: pointer;
+  flex-shrink: 0;
 }
 
-/* Button hover */
+/* Reset */
+ul, li { padding: 0; margin: 0; list-style: none; }
+
+/* Task items (cards) */
+#TaskList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+#TaskList li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px;
+  background-color: #ebe4ff;
+  border-radius: 8px;
+  color: #3c1c75;
+  font-weight: 500;
+  box-sizing: border-box;
+  min-width: 0;               /* CRUCIAL so flex children can shrink */
+}
+
+/* Task text block — allow truncation if too long */
+.task-text {
+  flex: 1;
+  min-width: 0;               /* CRUCIAL */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Delete button (fixed, won't push layout) */
+#TaskList button {
+  background: #9d4edd;
+  border: none;
+  border-radius: 6px;
+  padding: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform .12s ease, background .12s;
+  flex-shrink: 0;             /* do not let it shrink into the text */
+  width: 40px;
+  height: 40px;
+}
 #TaskList button:hover {
-  background: red;
-  transform: scale(1.05);
+  background: #7b1fb8;
+  transform: scale(1.04);
 }
-
-/* Trash icon */
 #TaskList button img {
   width: 18px;
   height: 18px;
   pointer-events: none;
+}
+
+/* Prevent page-level horizontal scrolling (optional safety) */
+html, body {
+  overflow-x: hidden;
+}
+
+/* ---------- Responsive tweaks ---------- */
+@media (max-width: 420px) {
+  .add-task-container,
+  .search-bar-container {
+    gap: 8px;
+    padding: 0 6px;
+  }
+
+  #addTaskButton,
+  #Search-btn {
+    padding: 8px 10px;
+  }
+
+  #TaskList li {
+    padding: 10px;
+    gap: 8px;
+  }
+
+  #TaskList button {
+    width: 36px;
+    height: 36px;
+    padding: 6px;
+  }
+
+  .task-container {
+    padding: 16px;
+  }
 }

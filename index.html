@@ -7,16 +7,21 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1 id="add-task-title"> Add Task</h1>
+    <h1 id="add-task-title"> TaskTrack</h1>
     <div class="add-task-container">
+     
     <input type="text" id="taskInput" placeholder="Add a new task">
     <button id="addTaskButton">Add Task</button>    
     
     </div>
-        <h1 id="task-list-title">Task List</h1>
         <div class="task-container">
-        <ul id="TaskList"></ul>
-    </div>
+            <h1 id="task-list-title">Task List</h1>
+            <div class="search-bar-container">
+                <input type="text" id="search" placeholder="Search for tasks">
+                <button id= "Search-btn">Search</button>
+            </div>   
+            <ul id="TaskList"></ul>
+        </div>
     
 
 <script src="index.js"></script>
