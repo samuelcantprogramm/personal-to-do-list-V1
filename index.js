@@ -91,7 +91,7 @@ function loadTasks() {
   }
 }
 
-/* ---------- Optional: simple live-search (if you have an input#search) ---------- */
+/* ---------- Saerch Bar  ---------- */
 if (searchInput) {
   searchInput.addEventListener('input', () => {
     const q = searchInput.value.trim().toLowerCase();
